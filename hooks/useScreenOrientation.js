@@ -1,6 +1,12 @@
 import { useState, useEffect } from 'react';
+import useWebSocket from 'react-use-websocket';
 
 export default function useScreenOrientation() {
+
+    const {
+        sendMessage,
+    } = useWebSocket('wss://mckenney.hopto.org');
+
     const [aclState, setAclState] = useState({
         a: 0,
         b: 0,
@@ -8,9 +14,9 @@ export default function useScreenOrientation() {
     });
 
     useEffect(() => {
-        console.log("josh was here");
-        function handleOrientation({beta: b, gamma: g, alpha: a}) {
-            setAclState({a, b, g});
+        function handleOrientation({ beta: b, gamma: g, alpha: a }) {
+            setAclState({ a, b, g });
+            sendMessage(JSON.stringify({a,b,g}))
         }
 
         window.addEventListener('deviceorientation', handleOrientation);

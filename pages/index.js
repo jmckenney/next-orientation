@@ -1,9 +1,11 @@
 import React, { useRef } from 'react';
 import useWebSocket from 'react-use-websocket';
 import useTouchMove from '../hooks/useTouchMove';
+import useGeoLocation from '../hooks/useGeoLocation';
 
 export default () => {
     const touchMove = useTouchMove();
+    const userPosition = useGeoLocation();
 
     const {
         lastMessage,

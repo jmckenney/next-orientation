@@ -1,37 +1,40 @@
 import React, { useRef } from 'react';
 import useWebSocket from 'react-use-websocket';
-import useTouchMove from '../hooks/useTouchMove';
 import useGeoLocation from '../hooks/useGeoLocation';
+import { Map, Marker } from "pigeon-maps"
+import { stamenTerrain } from 'pigeon-maps/providers'
 
 export default () => {
-    const touchMove = useTouchMove();
-    const userPosition = useGeoLocation();
+  const userPosition = useGeoLocation();
 
-    const {
-        lastMessage,
-    } = useWebSocket('wss://mckenney.hopto.org');
+  const {
+    lastMessage,
+  } = useWebSocket('wss://mckenney.hopto.org');
 
-    const usersOrientations = useRef({});
-    const { x: alpha, sender } = lastMessage ? JSON.parse(lastMessage.data) : {};
-    if (lastMessage) {
-        const obj = {
-            ...usersOrientations.current,
-            [sender]: { alpha: alpha*100 }
-        };
-        usersOrientations.current = obj;
-    }
+  const userLocations = useRef({});
+  const { pos, sender } = lastMessage ? JSON.parse(lastMessage.data) : {};
+  if (lastMessage) {
+    const obj = {
+      ...userLocations.current,
+      [sender]: { lat: pos.lat, lon: pos.lon }
+    };
+    userLocations.current = obj;
+  }
 
-    return (
-        <div className="bg-blue-600 text-white h-screen p-7 flex flex-wrap">
-            {Object.entries(usersOrientations.current).map((user) => {
-                return (
-                    <p
-                        key={user[0]}
-                        className="p-6 border rounded-3xl bg-white opacity-50 text-white  w-36 h-36"
-                        style={{ transform: `rotateZ(-0deg) rotateX(-0deg) rotateY(${user[1].alpha}deg)` }}>
-                    </p>
-                )
-            })}
-        </div>
-    );
+  return (
+    <div className="text-white h-screen flex flex-wrap">
+      <Map
+        provider={stamenTerrain}
+        defaultCenter={[38.856294399999996, -121.32024320000001]}
+        defaultZoom={11}>
+        {userPosition && userPosition.lat && <Marker width={40} anchor={[userPosition.lat, userPosition.lon]} />}
+        
+        {Object.entries(userLocations.current).map((user) => {
+          return (
+            <Marker key={user[0]} width={30} anchor={[user[1].lat, user[1].lon]} />
+          )
+        })}
+      </Map>
+    </div>
+  );
 };

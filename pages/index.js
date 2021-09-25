@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import useWebSocket from 'react-use-websocket';
 import useGeoLocation from '../hooks/useGeoLocation';
-import { Map, Marker } from "pigeon-maps"
+import { Map, Marker, Overlay } from "pigeon-maps"
 import { stamenTerrain } from 'pigeon-maps/providers'
 
 export default () => {
@@ -36,8 +36,10 @@ export default () => {
         {Object.entries(userLocations.current).map((user) => {
           return (
             <Marker key={user[0]} width={30} anchor={[user[1].lat, user[1].lon]} />
-          )
-        })}
+            )
+          })}
+        {/* Lafayette Reservoir Meetup Location */}
+        <Marker width={30} color={"blue"} anchor={[37.8827716451657, -122.1349967587504]} />
       </Map>
     </div>
   );

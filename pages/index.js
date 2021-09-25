@@ -25,7 +25,11 @@ export default () => {
     <div className="text-white h-screen flex flex-wrap">
       <Map
         provider={stamenTerrain}
-        defaultCenter={[38.856294399999996, -121.32024320000001]}
+        center={
+          userPosition && userPosition.lat
+            ? [userPosition.lat, userPosition.lon]
+            : [38.856294399999996, -121.32024320000001]
+        }
         defaultZoom={11}>
         {userPosition && userPosition.lat && <Marker width={40} anchor={[userPosition.lat, userPosition.lon]} />}
         
